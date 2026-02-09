@@ -1,3 +1,4 @@
+{{-- filepath: resources/views/components/admin/⚡listing-index.blade.php --}}
 <?php
 
 use Livewire\Component;
@@ -11,13 +12,13 @@ new class extends Component {
 
     // ✅ URL query parameters (shareable links)
     #[Url(as: 'q')]
-    public string $search = '';
+    public $search = '';  // ✅ Remove type hint
 
     #[Url]
-    public string $category_id = '';
+    public $category_id = '';  // ✅ Remove type hint
 
     #[Url]
-    public string $status = '';
+    public $status = '';  // ✅ Remove type hint
 
     // ✅ Reset pagination when filters change
     public function updatingSearch()
@@ -167,7 +168,9 @@ new class extends Component {
             <!-- Status Filter -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                <select wire:model.live="status" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                <select wire:model.live="status" 
+                        wire:key="status-filter-{{ $status }}"
+                        class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
                     <option value="">All Statuses</option>
                     <option value="draft">Draft</option>
                     <option value="pending">Pending</option>
@@ -179,7 +182,9 @@ new class extends Component {
             <!-- Category Filter -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                <select wire:model.live="category_id" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                <select wire:model.live="category_id" 
+                        wire:key="category-filter-{{ $category_id }}"
+                        class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
                     <option value="">All Categories</option>
                     @foreach($categories as $category)
                         <option value="{{ $category->id }}">{{ $category->name }}</option>

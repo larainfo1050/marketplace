@@ -1,3 +1,4 @@
+{{-- filepath: resources/views/components/provider/⚡listing-index.blade.php --}}
 <?php
 
 use Livewire\Component;
@@ -186,6 +187,7 @@ new class extends Component {
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
                 <select wire:model.live="category_id"
+                        wire:key="category-filter-{{ $category_id }}"
                         class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
                     <option value="">All Categories</option>
                     @foreach($categories as $category)
@@ -198,6 +200,7 @@ new class extends Component {
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
                 <select wire:model.live="status"
+                        wire:key="status-filter-{{ $status }}"
                         class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
                     <option value="">All Statuses</option>
                     <option value="draft">Draft</option>
@@ -211,6 +214,7 @@ new class extends Component {
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Sort By</label>
                 <select wire:model.live="sort"
+                        wire:key="sort-filter-{{ $sort }}"
                         class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
                     <option value="newest">Newest First</option>
                     <option value="oldest">Oldest First</option>
@@ -228,6 +232,7 @@ new class extends Component {
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">City</label>
                     <select wire:model.live="city"
+                            wire:key="city-filter-{{ $city }}"
                             class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
                         <option value="">All Cities</option>
                         @foreach($cities as $cityOption)
