@@ -14,6 +14,16 @@ Route::get('/ping', function () {
     ]);
 });
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+// 🔒 Protected routes (authentication required)
+Route::middleware('auth:sanctum')->group(function () {
+    
+    // Auth endpoints
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/logout-all', [AuthController::class, 'logoutAll']);
+    Route::get('/user', [AuthController::class, 'user']);
+    
+    // Listing endpoints (example for future expansion)
+    Route::get('/listings', [ListingController::class, 'index']);
+    Route::post('/listings', [ListingController::class, 'store'])->middleware('role:provider');
+    
+});
