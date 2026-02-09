@@ -18,13 +18,7 @@ class ListingController extends Controller
      */
     public function index()
     {
-        $listings = auth()->user()
-            ->listings()
-            ->with('category')
-            ->latest()
-            ->paginate(10);
-
-        return view('provider.listings.index', compact('listings'));
+        return view('provider.listings.index');
     }
 
     /**
