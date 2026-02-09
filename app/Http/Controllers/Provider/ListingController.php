@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Provider;
 use App\Http\Controllers\Controller;
 use App\Models\Listing;
 use App\Models\Category;
+use App\Http\Requests\StoreListingRequest;
+use App\Http\Requests\UpdateListingRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -35,28 +37,18 @@ class ListingController extends Controller
     /**
      * Store a newly created listing
      */
-    public function store(Request $request)
+    public function store(StoreListingRequest $request)
     {
         $this->authorize('create', Listing::class);
 
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string|min:50',
-            'category_id' => 'required|exists:categories,id',
-            'city' => 'required|string|max:100',
-            'suburb' => 'required|string|max:100',
-            'pricing_type' => 'required|in:hourly,fixed',
-            'price_amount' => 'required|numeric|min:0|max:999999.99',
-        ]);
-
-        // ✅ Determine status based on button clicked
+        // ✅ Determine status based on button clicked (UI logic, not validation)
         $status = $request->input('action') === 'draft' ? 'draft' : 'pending';
 
         $listing = Listing::create([
             'user_id' => auth()->id(),
             'slug' => Str::slug($request->title) . '-' . Str::random(6),
             'status' => $status,
-            ...$validated,
+            ...$request->validated(),
         ]);
 
         $message = $status === 'draft' 
@@ -74,9 +66,7 @@ class ListingController extends Controller
     public function show(Listing $listing)
     {
         $this->authorize('update', $listing);
-
         $listing->load('category');
-
         return view('provider.listings.show', compact('listing'));
     }
 
@@ -86,28 +76,18 @@ class ListingController extends Controller
     public function edit(Listing $listing)
     {
         $this->authorize('update', $listing);
-
         $categories = Category::active()->get();
-
         return view('provider.listings.edit', compact('listing', 'categories'));
     }
 
     /**
      * Update the listing
      */
-    public function update(Request $request, Listing $listing)
+    public function update(UpdateListingRequest $request, Listing $listing)
     {
         $this->authorize('update', $listing);
 
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string|min:50',
-            'category_id' => 'required|exists:categories,id',
-            'city' => 'required|string|max:100',
-            'suburb' => 'required|string|max:100',
-            'pricing_type' => 'required|in:hourly,fixed',
-            'price_amount' => 'required|numeric|min:0|max:999999.99',
-        ]);
+        $validated = $request->validated();
 
         // ✅ Only allow status change from draft → pending
         if ($listing->status === 'draft') {
@@ -131,9 +111,7 @@ class ListingController extends Controller
     public function destroy(Listing $listing)
     {
         $this->authorize('delete', $listing);
-
         $listing->delete();
-
         return redirect()
             ->route('provider.listings.index')
             ->with('success', 'Listing deleted successfully!');
