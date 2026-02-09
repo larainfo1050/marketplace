@@ -92,8 +92,9 @@ The database seeder creates the following users. You can use them to test the di
 
 ### Provider Workflow
 
-1.  **Register/Login:** A user can register and will be assigned the "Provider" role.
+1.  **Login:** If a "provider" logs in, they can see the dashboard..
 2.  **Dashboard:** The provider dashboard (`/provider/dashboard`) shows key statistics like total listings, pending listings, and open enquiries.
+![Provider Dashboard](./docs/images/provider_dasbord.png)
 3.  **Create & Manage Listings:**
     -   Providers can create new listings from their dashboard.
     -   They can save a listing as a **draft** or submit it for **pending** approval.
