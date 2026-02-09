@@ -99,6 +99,10 @@ The database seeder creates the following users. You can use them to test the di
     -   Providers can create new listings from their dashboard.
     -   They can save a listing as a **draft** or submit it for **pending** approval.
     -   Existing listings can be edited or deleted.
+    ![list Create](./docs/images/create_list.png)
+    ![list](./docs/images/list.png)
+    ![editlist](./docs/images/edit_list.png)
+
 4.  **Manage Enquiries:**
     -   Providers can view all enquiries received from customers at `/provider/enquiries`.
     -   They can open an enquiry to view the full conversation and send a **reply**.
