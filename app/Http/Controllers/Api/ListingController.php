@@ -7,6 +7,7 @@ use App\Models\Listing;
 use App\Models\Category;
 use App\Http\Requests\StoreListingRequest;
 use App\Http\Requests\UpdateListingRequest;
+use App\Http\Resources\ListingResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -54,7 +55,7 @@ class ListingController extends Controller
             default => $query->orderBy('created_at', 'desc'),
         };
 
-        return response()->json($query->paginate(20));
+        return ListingResource::collection($query->paginate(20));
     }
 
     /**
@@ -76,12 +77,14 @@ class ListingController extends Controller
 
         $listing->load(['category', 'user']);
 
-        return response()->json([
-            'message' => $status === 'draft' 
-                ? 'Listing saved as draft.' 
-                : 'Listing submitted for approval.',
-            'listing' => $listing,
-        ], 201);
+        return (new ListingResource($listing))
+            ->additional([
+                'message' => $status === 'draft' 
+                    ? 'Listing saved as draft.' 
+                    : 'Listing submitted for approval.',
+            ])
+            ->response()
+            ->setStatusCode(201);
     }
 
     /**
@@ -93,7 +96,7 @@ class ListingController extends Controller
         
         $listing->load(['category', 'user']);
         
-        return response()->json($listing);
+        return new ListingResource($listing);
     }
 
     /**
@@ -113,12 +116,12 @@ class ListingController extends Controller
         $listing->update($validated);
         $listing->load(['category', 'user']);
 
-        return response()->json([
-            'message' => isset($validated['status']) && $validated['status'] === 'pending'
-                ? 'Listing submitted for approval!'
-                : 'Listing updated successfully!',
-            'listing' => $listing,
-        ]);
+        return (new ListingResource($listing))
+            ->additional([
+                'message' => isset($validated['status']) && $validated['status'] === 'pending'
+                    ? 'Listing submitted for approval!'
+                    : 'Listing updated successfully!',
+            ]);
     }
 
     /**
@@ -147,6 +150,8 @@ class ListingController extends Controller
             $query->where('status', $request->status);
         }
 
-        return response()->json($query->orderBy('created_at', 'desc')->paginate(20));
+        return ListingResource::collection(
+            $query->orderBy('created_at', 'desc')->paginate(20)
+        );
     }
 }
