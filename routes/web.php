@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Provider\ListingController;
+use App\Http\Controllers\Admin\ListingController as AdminListingController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -11,6 +12,32 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+//  Admin routes (ONLY admins can access)
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    
+    // Dashboard
+    Route::get('/dashboard', function () {
+        $stats = [
+            'total_listings' => \App\Models\Listing::count(),
+            'pending_listings' => \App\Models\Listing::where('status', 'pending')->count(),
+            'approved_listings' => \App\Models\Listing::where('status', 'approved')->count(),
+            'suspended_listings' => \App\Models\Listing::where('status', 'suspended')->count(),
+        ];
+        return view('admin.dashboard', compact('stats'));
+    })->name('dashboard');
+    
+    // Listing Management
+    Route::get('/listings', [AdminListingController::class, 'index'])->name('listings.index');
+    Route::get('/listings/{listing}', [AdminListingController::class, 'show'])->name('listings.show');
+    Route::delete('/listings/{listing}', [AdminListingController::class, 'destroy'])->name('listings.destroy');
+    
+    //  Status Actions (all admin needs)
+    Route::post('/listings/{listing}/approve', [AdminListingController::class, 'approve'])->name('listings.approve');
+    Route::post('/listings/{listing}/suspend', [AdminListingController::class, 'suspend'])->name('listings.suspend');
+    Route::post('/listings/{listing}/restore', [AdminListingController::class, 'restore'])->name('listings.restore');
+});
+
 
 // Provider routes (ONLY providers can access)
 Route::middleware(['auth', 'role:provider'])->prefix('provider')->name('provider.')->group(function () {
