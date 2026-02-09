@@ -55,6 +55,11 @@ class User extends Authenticatable
         return $this->hasMany(Listing::class);
     }
 
+    public function enquiries(): HasMany
+    {
+        return $this->hasMany(Enquiry::class, 'customer_id');
+    }
+
     public function sentEnquiries(): HasMany
     {
         return $this->hasMany(Enquiry::class, 'customer_id');

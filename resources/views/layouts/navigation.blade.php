@@ -12,9 +12,27 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    @can('viewAny', App\Models\Listing::class)
+                    @if(Auth::user()->hasRole('admin'))
+                    <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
+                        {{ __('Admin Dashboard') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('admin.listings.index')" :active="request()->routeIs('admin.listings.*')">
+                        {{ __('Manage Listings') }}
+                    </x-nav-link>
+                    @elseif(Auth::user()->hasRole('provider'))
+                    <x-nav-link :href="route('provider.dashboard')" :active="request()->routeIs('provider.dashboard')">
+                        {{ __('Provider Dashboard') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('provider.listings.index')" :active="request()->routeIs('provider.listings.*')">
+                        {{ __('My Listings') }}
+                    </x-nav-link>
+                    @else
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    @endif
+                    @endcan
                 </div>
             </div>
 
@@ -42,8 +60,7 @@
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
 
-                            <x-dropdown-link :href="route('logout')"
-                                    onclick="event.preventDefault();
+                            <x-dropdown-link :href="route('logout')" onclick="event.preventDefault();
                                                 this.closest('form').submit();">
                                 {{ __('Log Out') }}
                             </x-dropdown-link>
@@ -67,9 +84,29 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
+            <div class="pt-2 pb-3 space-y-1">
+                @can('viewAny', App\Models\Listing::class)
+                @if(Auth::user()->hasRole('admin'))
+                <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
+                    {{ __('Admin Dashboard') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.listings.index')" :active="request()->routeIs('admin.listings.*')">
+                    {{ __('Manage Listings') }}
+                </x-responsive-nav-link>
+                @elseif(Auth::user()->hasRole('provider'))
+                <x-responsive-nav-link :href="route('provider.dashboard')" :active="request()->routeIs('provider.dashboard')">
+                    {{ __('Provider Dashboard') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('provider.listings.index')" :active="request()->routeIs('provider.listings.*')">
+                    {{ __('My Listings') }}
+                </x-responsive-nav-link>
+                @else
+                <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                    {{ __('Dashboard') }}
+                </x-responsive-nav-link>
+                @endif
+                @endcan
+            </div>
         </div>
 
         <!-- Responsive Settings Options -->
@@ -88,8 +125,7 @@
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
 
-                    <x-responsive-nav-link :href="route('logout')"
-                            onclick="event.preventDefault();
+                    <x-responsive-nav-link :href="route('logout')" onclick="event.preventDefault();
                                         this.closest('form').submit();">
                         {{ __('Log Out') }}
                     </x-responsive-nav-link>
