@@ -107,6 +107,8 @@ The database seeder creates the following users. You can use them to test the di
     -   Providers can view all enquiries received from customers at `/provider/enquiries`.
     -   They can open an enquiry to view the full conversation and send a **reply**.
     -   Once a conversation is complete, they can **close** the enquiry.
+     ![enquiries list](./docs/images/enquiries_list.png)
+     ![enquiries replay](./docs/images/enquiries_replay.png)
 
 ### Admin Workflow
 
