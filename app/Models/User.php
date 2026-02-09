@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -47,7 +48,28 @@ class User extends Authenticatable
         ];
     }
 
-    // Helper methods for your policies
+    // Relationships
+    public function listings(): HasMany
+    {
+        return $this->hasMany(Listing::class);
+    }
+
+    public function sentEnquiries(): HasMany
+    {
+        return $this->hasMany(Enquiry::class, 'customer_id');
+    }
+
+    public function receivedEnquiries(): HasMany
+    {
+        return $this->hasMany(Enquiry::class, 'provider_id');
+    }
+
+    public function enquiryReplies(): HasMany
+    {
+        return $this->hasMany(EnquiryReply::class);
+    }
+
+    // Helper methods
     public function isAdmin(): bool
     {
         return $this->hasRole('admin');

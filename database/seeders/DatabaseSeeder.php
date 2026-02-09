@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
+use App\Models\Listing;
+use App\Models\Category;
 use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
@@ -17,12 +19,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create roles first
-        Role::create(['name' => 'admin']);
-        Role::create(['name' => 'provider']);
-        Role::create(['name' => 'customer']);
+        // Create roles
+        $adminRole = Role::create(['name' => 'admin']);
+        $providerRole = Role::create(['name' => 'provider']);
+        $customerRole = Role::create(['name' => 'customer']);
 
-        // Create admin user
+        // Create users
         $admin = User::create([
             'name' => 'Admin User',
             'email' => 'admin@test.com',
@@ -30,7 +32,6 @@ class DatabaseSeeder extends Seeder
         ]);
         $admin->assignRole('admin');
 
-        // Create provider user
         $provider = User::create([
             'name' => 'John Provider',
             'email' => 'provider@test.com',
@@ -38,12 +39,46 @@ class DatabaseSeeder extends Seeder
         ]);
         $provider->assignRole('provider');
 
-        // Create customer user
         $customer = User::create([
             'name' => 'Jane Customer',
             'email' => 'customer@test.com',
             'password' => bcrypt('password'),
         ]);
         $customer->assignRole('customer');
+
+        // Create categories
+        $plumbing = Category::create([
+            'name' => 'Plumbing',
+            'slug' => 'plumbing',
+            'is_active' => true,
+        ]);
+
+        $electrical = Category::create([
+            'name' => 'Electrical',
+            'slug' => 'electrical',
+            'is_active' => true,
+        ]);
+
+        $cleaning = Category::create([
+            'name' => 'Cleaning',
+            'slug' => 'cleaning',
+            'is_active' => true,
+        ]);
+
+        // Create 20 listings
+        foreach (range(1, 20) as $i) {
+            Listing::create([
+                'user_id' => $provider->id,
+                'category_id' => fake()->randomElement([$plumbing->id, $electrical->id, $cleaning->id]),
+                'title' => fake()->jobTitle() . ' Services',
+                'slug' => Str::slug(fake()->jobTitle() . ' services ' . $i),
+                'description' => fake()->paragraphs(3, true),
+                'city' => fake()->randomElement(['Sydney', 'Melbourne', 'Brisbane']),
+                'suburb' => fake()->city(),
+                'pricing_type' => fake()->randomElement(['hourly', 'fixed']),
+                'price_amount' => fake()->numberBetween(50, 200),
+                'status' => 'approved', // String instead of enum
+            ]);
+        }
     }
 }
