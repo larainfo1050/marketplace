@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Provider\ListingController;
 use App\Http\Controllers\Admin\ListingController as AdminListingController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Customer\DashboardController as CustomerDashboardController;
 use App\Http\Controllers\Provider\DashboardController as ProviderDashboardController;
 use App\Http\Controllers\Provider\EnquiryController as ProviderEnquiryController;
@@ -18,22 +19,16 @@ Route::middleware(['auth', 'verified', 'role:customer'])->group(function () {
     Route::get('/dashboard', [CustomerDashboardController::class, 'index'])->name('dashboard');
     Route::post('/enquiries', [EnquiryController::class, 'store'])->name('enquiries.store');
     Route::get('/enquiries/captcha', [EnquiryController::class, 'generateCaptcha'])->name('enquiries.captcha');
+    Route::get('/my-enquiries', [EnquiryController::class, 'index'])->name('customer.enquiries.index');
+    Route::get('/my-enquiries/{enquiry}', [EnquiryController::class, 'show'])->name('customer.enquiries.show');
+    Route::post('/my-enquiries/{enquiry}/reply', [EnquiryController::class, 'reply'])->name('customer.enquiries.reply');
 });
 
 //  Admin routes (ONLY admins can access)
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    
     // Dashboard
-    Route::get('/dashboard', function () {
-        $stats = [
-            'total_listings' => \App\Models\Listing::count(),
-            'pending_listings' => \App\Models\Listing::where('status', 'pending')->count(),
-            'approved_listings' => \App\Models\Listing::where('status', 'approved')->count(),
-            'suspended_listings' => \App\Models\Listing::where('status', 'suspended')->count(),
-        ];
-        return view('admin.dashboard', compact('stats'));
-    })->name('dashboard');
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     
     // Listing Management (Livewire handles all actions)
     Route::get('/listings', [AdminListingController::class, 'index'])->name('listings.index');

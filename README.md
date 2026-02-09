@@ -1,59 +1,155 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Marketplace Platform
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This is a service marketplace platform built with Laravel, allowing service providers to create listings, customers to find and contact them, and administrators to moderate the content.
 
-## About Laravel
+## Core Technologies
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+-   **Backend:** Laravel 11
+-   **Frontend:** Blade, Tailwind CSS
+-   **Database:** MySQL
+-   **Authentication:** Laravel Sanctum (for API), Laravel Breeze (for web)
+-   **Roles & Permissions:** `spatie/laravel-permission`
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 1. Installation and Setup
 
-## Learning Laravel
+Follow these steps to get the application running on your local machine.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### Prerequisites
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+-   PHP >= 8.2
+-   Composer
+-   Node.js & NPM
+-   A local database server (e.g., MySQL)
 
-## Laravel Sponsors
+### Step-by-Step Guide
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+1.  **Clone the Repository**
+    ```bash
+    git clone <your-repository-url>
+    cd marketplace
+    ```
 
-### Premium Partners
+2.  **Install Dependencies**
+    Install both PHP and JavaScript dependencies.
+    ```bash
+    composer install
+    npm install
+    ```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+3.  **Environment Configuration**
+    Create your environment file and generate an application key.
+    ```bash
+    cp .env.example .env
+    php artisan key:generate
+    ```
 
-## Contributing
+4.  **Configure Database**
+    Open the `.env` file and update the database connection details to match your local setup.
+    ```dotenv
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=marketplace
+    DB_USERNAME=root
+    DB_PASSWORD=
+    ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+5.  **Run Migrations and Seed the Database**
+    This command will create all necessary tables and populate the database with test users, roles, categories, and listings, so you can start testing immediately.
+    ```bash
+    php artisan migrate --seed
+    ```
 
-## Code of Conduct
+6.  **Start the Servers**
+    Run the Vite development server for frontend assets and the Laravel development server.
+    ```bash
+    # Terminal 1: Start Vite
+    npm run dev
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+    # Terminal 2: Start Laravel
+    php artisan serve
+    ```
 
-## Security Vulnerabilities
+The application will be available at **http://127.0.0.1:8000**.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+## 2. User Roles & Test Credentials
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+The database seeder creates the following users. You can use them to test the different roles and workflows.
+
+| Role       | Email                | Password   |
+| :--------- | :------------------- | :--------- |
+| **Admin**  | `admin@test.com`     | `password` |
+| **Provider** | `provider@test.com`  | `password` |
+| **Customer** | `customer@test.com`  | `password` |
+
+---
+
+## 3. Application Workflow & Features
+
+### Provider Workflow
+
+1.  **Register/Login:** A user can register and will be assigned the "Provider" role.
+2.  **Dashboard:** The provider dashboard (`/provider/dashboard`) shows key statistics like total listings, pending listings, and open enquiries.
+3.  **Create & Manage Listings:**
+    -   Providers can create new listings from their dashboard.
+    -   They can save a listing as a **draft** or submit it for **pending** approval.
+    -   Existing listings can be edited or deleted.
+4.  **Manage Enquiries:**
+    -   Providers can view all enquiries received from customers at `/provider/enquiries`.
+    -   They can open an enquiry to view the full conversation and send a **reply**.
+    -   Once a conversation is complete, they can **close** the enquiry.
+
+### Admin Workflow
+
+1.  **Login:** The admin logs in with the credentials above.
+2.  **Dashboard:** The admin dashboard (`/admin/dashboard`) provides an overview of the entire platform, including total listings and counts for each status (pending, approved, suspended).
+3.  **Moderate Listings:**
+    -   Admins can view all listings submitted by providers.
+    -   They have the authority to **approve** a pending listing, making it public.
+    -   They can also **suspend** an approved listing if it violates platform rules.
+
+### Customer Workflow
+
+1.  **Register/Login:** A user can register and will be assigned the "Customer" role.
+2.  **Browse Listings:** Customers can browse all approved listings on the public-facing pages.
+3.  **Send Enquiries:**
+    -   From a listing's detail page, a customer can fill out a form to send an enquiry directly to the provider.
+4.  **Manage Enquiries:**
+    -   Customers have their own dashboard (`/dashboard`) and an enquiry management page (`/my-enquiries`).
+    -   They can view the status of their sent enquiries and read **replies** from providers.
+    -   They can continue the conversation by replying back to the provider.
+
+---
+
+## 4. API Endpoints (`routes/api.php`)
+
+The application also exposes a RESTful API for listings and authentication.
+
+**Base URL:** `http://127.0.0.1:8000/api`
+
+### Public Endpoints
+
+| Method | URI                  | Action                               |
+| :----- | :------------------- | :----------------------------------- |
+| `GET`  | `/listings`          | Get a paginated list of all listings |
+| `GET`  | `/listings/{listing}`| Get details for a single listing     |
+| `POST` | `/register`          | Register a new user                  |
+| `POST` | `/login`             | Authenticate a user and get a token  |
+
+### Protected Endpoints (Requires Sanctum Token)
+
+These routes require an `Authorization: Bearer <token>` header.
+
+| Method   | URI                    | Role(s)  | Action                               |
+| :------- | :--------------------- | :------- | :----------------------------------- |
+| `GET`    | `/user`                | All      | Get the authenticated user's details |
+| `POST`   | `/logout`              | All      | Log out the current session          |
+| `POST`   | `/logout-all`          | All      | Log out from all devices             |
+| `POST`   | `/listings`            | Provider | Create a new listing                 |
+| `PUT`    | `/listings/{listing}`  | Provider | Update an existing listing           |
+| `DELETE` | `/listings/{listing}`  | Provider | Delete a listing                     |
+| `GET`    | `/my-listings`         | Provider | Get listings for the auth'd provider |

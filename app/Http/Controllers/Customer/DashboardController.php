@@ -14,8 +14,8 @@ class DashboardController extends Controller
     {
         $stats = [
             'total_enquiries' => auth()->user()->enquiries()->count(),
-            'pending_enquiries' => auth()->user()->enquiries()->where('status', 'pending')->count(),
-            'responded_enquiries' => auth()->user()->enquiries()->where('status', 'responded')->count(),
+            'pending_enquiries' => auth()->user()->enquiries()->where('status', 'open')->count(),
+            'responded_enquiries' => auth()->user()->enquiries()->where('status', 'replied')->count(),
         ];
         
         return view('dashboard', compact('stats'));
