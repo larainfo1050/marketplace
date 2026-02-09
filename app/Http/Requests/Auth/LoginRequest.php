@@ -82,4 +82,23 @@ class LoginRequest extends FormRequest
     {
         return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
     }
+
+    /**
+     * Get the redirect URL after successful authentication
+     */
+    public function redirectTo(): string
+    {
+        $user = Auth::user();
+
+        // Redirect based on user role
+        if ($user->hasRole('admin')) {
+            return route('admin.dashboard');
+        } elseif ($user->hasRole('provider')) {
+            return route('provider.dashboard');
+        } elseif ($user->hasRole('customer')) {
+            return route('dashboard'); // Customer dashboard
+        }
+
+        return route('dashboard'); // Default fallback
+    }
 }
