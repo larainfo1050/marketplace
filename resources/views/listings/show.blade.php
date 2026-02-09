@@ -9,9 +9,9 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans antialiased">
+    <body class="font-sans antialiased" x-data="enquiryModal()">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-            <!-- Navigation (same as home) -->
+            <!-- Navigation -->
             <nav class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between h-16">
@@ -41,6 +41,24 @@
                     </div>
                 </div>
             </nav>
+
+            <!-- Success Message -->
+            @if(session('success'))
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+                    <div class="bg-green-50 dark:bg-green-900/50 border-l-4 border-green-400 p-4">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-green-700 dark:text-green-200">{{ session('success') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
 
             <!-- Listing Detail -->
             <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
@@ -115,25 +133,31 @@
                             <div class="text-center mb-6">
                                 <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">Starting from</p>
                                 <p class="text-4xl font-bold text-indigo-600 dark:text-indigo-400">
-                                    ${{ number_format($listing->price, 2) }}
+                                    ${{ number_format($listing->price_amount, 2) }}
                                 </p>
                                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">per {{ $listing->pricing_type }}</p>
                             </div>
 
                             @auth
                                 @if(auth()->user()->hasRole('customer'))
-                                    <a href="#" class="block w-full bg-indigo-600 text-white text-center px-6 py-3 rounded-md font-semibold hover:bg-indigo-700 transition">
+                                    <button @click="openModal" class="block w-full bg-indigo-600 text-white text-center px-6 py-3 rounded-md font-semibold hover:bg-indigo-700 transition">
                                         {{ __('Send Enquiry') }}
-                                    </a>
+                                    </button>
                                 @else
                                     <p class="text-sm text-gray-600 dark:text-gray-400 text-center">
                                         {{ __('Only customers can send enquiries') }}
                                     </p>
                                 @endif
                             @else
-                                <a href="{{ route('login') }}" class="block w-full bg-indigo-600 text-white text-center px-6 py-3 rounded-md font-semibold hover:bg-indigo-700 transition">
-                                    {{ __('Login to Send Enquiry') }}
-                                </a>
+                                <div class="space-y-3">
+                                    <a href="{{ route('login') }}" class="block w-full bg-indigo-600 text-white text-center px-6 py-3 rounded-md font-semibold hover:bg-indigo-700 transition">
+                                        {{ __('Login to Send Enquiry') }}
+                                    </a>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 text-center">
+                                        {{ __('Don\'t have an account?') }}
+                                        <a href="{{ route('register') }}" class="text-indigo-600 dark:text-indigo-400 hover:underline">{{ __('Sign up') }}</a>
+                                    </p>
+                                </div>
                             @endauth
                         </div>
 
@@ -157,5 +181,156 @@
                 </div>
             </div>
         </div>
+
+        <!-- Enquiry Modal -->
+        <div x-show="showModal" 
+             x-cloak
+             class="fixed inset-0 z-50 overflow-y-auto" 
+             aria-labelledby="modal-title" 
+             role="dialog" 
+             aria-modal="true">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <!-- Background overlay -->
+                <div x-show="showModal" 
+                     x-transition:enter="ease-out duration-300"
+                     x-transition:enter-start="opacity-0"
+                     x-transition:enter-end="opacity-100"
+                     x-transition:leave="ease-in duration-200"
+                     x-transition:leave-start="opacity-100"
+                     x-transition:leave-end="opacity-0"
+                     class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" 
+                     @click="closeModal"
+                     aria-hidden="true"></div>
+
+                <!-- Center modal -->
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                <!-- Modal panel -->
+                <div x-show="showModal"
+                     x-transition:enter="ease-out duration-300"
+                     x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                     x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                     x-transition:leave="ease-in duration-200"
+                     x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                     x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                     class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                    
+                    <form action="{{ route('enquiries.store') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="listing_id" value="{{ $listing->id }}">
+                        
+                        <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                            <div class="sm:flex sm:items-start">
+                                <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
+                                    <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100" id="modal-title">
+                                        {{ __('Send Enquiry') }}
+                                    </h3>
+                                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                                        {{ __('Send a message to') }} {{ $listing->user->name }}
+                                    </p>
+                                    
+                                    <div class="mt-4 space-y-4">
+                                        <!-- Subject -->
+                                        <div>
+                                            <label for="subject" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                                {{ __('Subject') }}
+                                            </label>
+                                            <input type="text" 
+                                                   name="subject" 
+                                                   id="subject" 
+                                                   required
+                                                   maxlength="255"
+                                                   value="{{ old('subject') }}"
+                                                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                            @error('subject')
+                                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+
+                                        <!-- Message -->
+                                        <div>
+                                            <label for="message" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                                {{ __('Message') }}
+                                            </label>
+                                            <textarea name="message" 
+                                                      id="message" 
+                                                      rows="4" 
+                                                      required
+                                                      maxlength="1000"
+                                                      class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('message') }}</textarea>
+                                            @error('message')
+                                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+
+                                        <!-- CAPTCHA -->
+                                        <div>
+                                            <label for="captcha_answer" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                                {{ __('Verify you are human') }}
+                                            </label>
+                                            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                                                {{ __('What is') }} <span x-text="captcha.num1" class="font-bold"></span> + <span x-text="captcha.num2" class="font-bold"></span>?
+                                            </p>
+                                            <input type="number" 
+                                                   name="captcha_answer" 
+                                                   id="captcha_answer" 
+                                                   required
+                                                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                            @error('captcha_answer')
+                                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-50 dark:bg-gray-900/50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                            <button type="submit" 
+                                    class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm">
+                                {{ __('Send Enquiry') }}
+                            </button>
+                            <button type="button" 
+                                    @click="closeModal"
+                                    class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-800 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                                {{ __('Cancel') }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function enquiryModal() {
+                return {
+                    showModal: false,
+                    captcha: {
+                        num1: 0,
+                        num2: 0
+                    },
+                    
+                    async openModal() {
+                        // Generate CAPTCHA
+                        try {
+                            const response = await fetch('{{ route('enquiries.captcha') }}');
+                            const data = await response.json();
+                            this.captcha = data;
+                            this.showModal = true;
+                        } catch (error) {
+                            console.error('Failed to load CAPTCHA:', error);
+                        }
+                    },
+                    
+                    closeModal() {
+                        this.showModal = false;
+                    }
+                }
+            }
+        </script>
+
+        <style>
+            [x-cloak] { display: none !important; }
+        </style>
     </body>
 </html>

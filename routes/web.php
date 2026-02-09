@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Provider\ListingController;
 use App\Http\Controllers\Admin\ListingController as AdminListingController;
 use App\Http\Controllers\Customer\DashboardController as CustomerDashboardController;
+use App\Http\Controllers\Customer\EnquiryController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
@@ -13,6 +14,8 @@ Route::get('/listings/{listing:slug}', [HomeController::class, 'show'])->name('l
 
 Route::middleware(['auth', 'verified', 'role:customer'])->group(function () {
     Route::get('/dashboard', [CustomerDashboardController::class, 'index'])->name('dashboard');
+    Route::post('/enquiries', [EnquiryController::class, 'store'])->name('enquiries.store');
+    Route::get('/enquiries/captcha', [EnquiryController::class, 'generateCaptcha'])->name('enquiries.captcha');
 });
 
 //  Admin routes (ONLY admins can access)
