@@ -119,6 +119,9 @@ The database seeder creates the following users. You can use them to test the di
     -   They have the authority to **approve** a pending listing, making it public.
     -   They can also **suspend** an approved listing if it violates platform rules.
 
+![admin d](./docs/images/admin_dasbord.png)
+![admin review](./docs/images/listing_review.png)
+
 ### Customer Workflow
 
 1.  **Register/Login:** A user can register and will be assigned the "Customer" role.
@@ -129,6 +132,10 @@ The database seeder creates the following users. You can use them to test the di
     -   Customers have their own dashboard (`/dashboard`) and an enquiry management page (`/my-enquiries`).
     -   They can view the status of their sent enquiries and read **replies** from providers.
     -   They can continue the conversation by replying back to the provider.
+    ![customer broswer](./docs/images/customer_enquiries.png)
+    ![customer modal](./docs/images/customer_enquiries_modal.png)
+    ![customer replay](./docs/images/customer_reaply.png)
+
 
 ---
 
