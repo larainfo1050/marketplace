@@ -156,6 +156,13 @@ The application also exposes a RESTful API for listings and authentication.
 
 ### Protected Endpoints (Requires Sanctum Token)
 
+ ![api](./docs/images/search_api.png)
+ ![api](./docs/images/api_register.png)
+ ![api](./docs/images/api_login.png)
+ ![api](./docs/images/listing_api_create.png)
+ ![api](./docs/images/update_api_list.png)
+
+
 These routes require an `Authorization: Bearer <token>` header.
 
 | Method   | URI                    | Role(s)  | Action                               |
