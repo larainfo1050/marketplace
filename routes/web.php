@@ -14,6 +14,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 //  Admin routes (ONLY admins can access)
+
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     
     // Dashboard
@@ -27,15 +28,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         return view('admin.dashboard', compact('stats'));
     })->name('dashboard');
     
-    // Listing Management
+    // Listing Management (Livewire handles all actions)
     Route::get('/listings', [AdminListingController::class, 'index'])->name('listings.index');
     Route::get('/listings/{listing}', [AdminListingController::class, 'show'])->name('listings.show');
-    Route::delete('/listings/{listing}', [AdminListingController::class, 'destroy'])->name('listings.destroy');
-    
-    //  Status Actions (all admin needs)
-    Route::post('/listings/{listing}/approve', [AdminListingController::class, 'approve'])->name('listings.approve');
-    Route::post('/listings/{listing}/suspend', [AdminListingController::class, 'suspend'])->name('listings.suspend');
-    Route::post('/listings/{listing}/restore', [AdminListingController::class, 'restore'])->name('listings.restore');
 });
 
 

@@ -8,7 +8,7 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @if (session('success'))
+            {{-- @if (session('success'))
                 <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
                     {{ session('success') }}
                 </div>
@@ -20,7 +20,6 @@
                 </div>
             @endif
 
-            {{-- Search & Filters --}}
             <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
                 <form method="GET" action="{{ route('admin.listings.index') }}">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -64,12 +63,10 @@
                 </form>
             </div>
 
-            {{-- Results Count --}}
             <div class="mb-4 text-sm text-gray-600">
                 Showing {{ $listings->firstItem() ?? 0 }} to {{ $listings->lastItem() ?? 0 }} of {{ $listings->total() }} listings
             </div>
 
-            {{-- Listings Table --}}
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
@@ -140,7 +137,8 @@
                 <div class="px-6 py-4">
                     {{ $listings->links() }}
                 </div>
-            </div>
+            </div> --}}
+            <livewire:admin.listing-index />
         </div>
     </div>
 </x-app-layout>
